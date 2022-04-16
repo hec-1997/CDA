@@ -21,8 +21,8 @@ from data_process import *
 
 
 # auto_encoder
-def multiple_layer_autoencoder(X_train, X_test, activation='linear', batch_size=100, nb_epoch=100, last_dim=256):
-    nb_hidden_layers = [X_train.shape[1], 1024, 512, last_dim]
+def multiple_layer_autoencoder(X_train, X_test, activation='linear', last_dim=256):
+    nb_hidden_layers = [X_train.shape[1], 600, 512, last_dim]
     X_train_tmp = np.copy(X_train)
     # X_test_tmp = np.copy(X_test)
     encoders = []
@@ -45,7 +45,7 @@ def multiple_layer_autoencoder(X_train, X_test, activation='linear', batch_size=
         decoder_layer = autoencoder.layers[-1]
         decoder = Model(input=encoded_input, output=decoder_layer(encoded_input))
         autoencoder.compile(loss='mean_squared_error', optimizer='adam')
-        autoencoder.fit(X_train_tmp, X_train_tmp, nb_epoch=50, batch_size=20, shuffle=True, validation_data=None,
+        autoencoder.fit(X_train_tmp, X_train_tmp, nb_epoch=20, batch_size=10, shuffle=True, validation_data=None,
                         verbose=1)
         encoder.compile(loss='mean_squared_error', optimizer='adam')
         # ae.add(encoder)
@@ -60,7 +60,7 @@ def multiple_layer_autoencoder(X_train, X_test, activation='linear', batch_size=
         encoders.append(encoder)
         autoencoders.append(autoencoder)
         # ae1.output_reconstruction= False
-        X_train_tmp = encoder.predict(X_train_tmp, batch_size=20)
+        X_train_tmp = encoder.predict(X_train_tmp, batch_size=10)
         print(X_train_tmp.shape)
         # X_test_tmp = ae.predict(X_test_tmp)
 
@@ -69,7 +69,7 @@ def multiple_layer_autoencoder(X_train, X_test, activation='linear', batch_size=
 
 
 # tuning
-def autoencoder_fine_tuning(x_base_train, y_base_train, x_base_test, Y_test, batch_size=20, nb_epoch=50):
+def autoencoder_fine_tuning(x_base_train, y_base_train, x_base_test, Y_test, batch_size=10, nb_epoch=20):
     print('autoencode learning')
     last_dim = 256
     encoders1, autoencoders1 = multiple_layer_autoencoder(x_base_train, x_base_test, activation='sigmoid',
